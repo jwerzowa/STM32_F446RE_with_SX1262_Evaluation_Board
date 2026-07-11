@@ -59,18 +59,29 @@ void SPI_Init(SPI_TypeDef* SPIx, SPI_Config* config) {
 
 
 void SPI_transmit(SPI_TypeDef* SPIx, uint8_t* data, uint16_t size) {
-
+    while (!(SPIx->SR & (1 << 1)));
+    for (uint16_t i = 0; i < size; i++) {
+        SPIx->DR = data[i]; // Write data to DR
+        while (!(SPIx->SR & (1 << 1))); // Wait until TXE is set again
+    }
+    while((SPIx->SR & (1 << 7))); // Wait until BSY is cleared
+    
 }
 
 void SPI_receive(SPI_TypeDef* SPIx, uint8_t* data, uint16_t size) {
-
-
+    for (uint16_t i = 0; i < size; i++) {
+        while (!(SPIx->SR & (1 << 1)));     // Wait for TXE
+        SPIx->DR = 0x00;                     // Send dummy byte
+        while (!(SPIx->SR & (1 << 0)));     // Wait for RXNE
+        data[i] = SPIx->DR;                  // Read received byte
+    }
+    while (SPIx->SR & (1 << 7));            // Wait for BSY to clear
 }
 
 void CS_Select(GPIO_TypeDef* port, uint32_t pin) {
-
+    GPIO_Write(port, pin, 0); // Pull low to select
 }
 
 void CS_Deselect(GPIO_TypeDef* port, uint32_t pin) {
-
+    GPIO_Write(port, pin, 1); // Pull high to deselect
 }
