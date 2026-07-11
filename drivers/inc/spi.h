@@ -18,11 +18,17 @@ typedef struct {
 } SPI_TypeDef;
 
 typedef struct {
-    uint32_t baudrate_prescaler; // Baud rate prescaler
-    uint32_t cpol;                // Clock polarity
-    uint32_t cpha;                // Clock phase
-    uint32_t dff;                 // Data frame format (8-bit or 16-bit)
-    uint32_t lsbfirst;            // LSB first or MSB first
+    GPIO_TypeDef* port;
+    uint32_t sck_pin;
+    uint32_t mosi_pin;
+    uint32_t miso_pin;
+    uint32_t nss_pin;
+    uint32_t af;
+    uint32_t baudrate_prescaler;
+    uint32_t cpol;
+    uint32_t cpha;
+    uint32_t dff;
+    uint32_t lsbfirst;
 } SPI_Config;
 
 
