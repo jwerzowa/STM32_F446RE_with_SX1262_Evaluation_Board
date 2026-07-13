@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(arm-none-eabi-addr2line -e firmware.elf -f -C 0x08000992)",
+      "Bash(arm-none-eabi-objdump -d firmware.elf)"
+    ]
+  }
+}

@@ -4,8 +4,8 @@ TOOLCHAIN = arm-none-eabi
 CC = $(TOOLCHAIN)-gcc
 OBJCOPY = $(TOOLCHAIN)-objcopy
 
-SRCS = src/main.c src/startup.s drivers/src/gpio.c drivers/src/rcc.c drivers/src/systick.c
-OBJS = src/main.o src/startup.o drivers/src/gpio.o drivers/src/rcc.o drivers/src/systick.o
+SRCS = src/main.c src/startup.s drivers/src/gpio.c drivers/src/rcc.c drivers/src/systick.c drivers/src/syscalls.c drivers/src/usart.c drivers/src/spi.c
+OBJS = src/main.o src/startup.o drivers/src/gpio.o drivers/src/rcc.o drivers/src/systick.o drivers/src/syscalls.o drivers/src/usart.o drivers/src/spi.o
 
 CFLAGS = -mcpu=cortex-m4 \
          -mthumb \
@@ -42,8 +42,11 @@ $(TARGET).bin: $(TARGET).elf
 clean:
 	rm -f $(OBJS) $(TARGET).elf $(TARGET).bin $(TARGET).map
 
-
 flash: $(TARGET).bin
-	openocd -f interface/stlink.cfg \
+	st-flash write $(TARGET).bin 0x08000000
+
+
+#flash: $(TARGET).bin
+#	openocd -f interface/stlink.cfg \
 			-f target/stm32f4x.cfg \
 			-c "program $(TARGET).bin 0x08000000 verify reset exit"

@@ -3,13 +3,20 @@
 
 #define FLASH_ACR ((volatile uint32_t*)0x40023C00)
 
+#define PWR_CR  ((volatile uint32_t*)0x40007000)
+#define PWR_CSR ((volatile uint32_t*)0x40007004)
+
 //Function to set the frequency of the clock
-//Return enum RCC_OK = 0 if successful, RCC_Error = 1 if not 
+//Return enum RCC_OK = 0 if successful, RCC_Error = 1 if not
 RCC_Status RCC_Config(uint32_t frequency) {
     // Enable HSI
-    RCC->RCC_CR |= (1<<0); 
+    RCC->RCC_CR |= (1<<0);
     // Wait for the HSI to be ready (Per reference manual: internal high-speed clock ready flag Set by hardware to indicate that the HSI oscillator is stable. After the HSION bit is cleared, HSIRDY goes low after 6 HSI clock cycles)
     while (!(RCC->RCC_CR & (1<<1)));
+
+    // Enable PWR peripheral clock and select voltage scale 1 (required to run above 168MHz)
+    RCC->RCC_APB1ENR |= (1 << 28);
+    *PWR_CR |= (3 << 14); // VOS = 0b11, Scale 1 mode
 
     //Configure the PLL (Phase locked loop) to achieve the desired frequency
     // Clear and set M, N, P, PLLSRC
@@ -30,6 +37,14 @@ RCC_Status RCC_Config(uint32_t frequency) {
     RCC->RCC_CR |= (1<<24); // Set PLLON bit
     //wait for PLL to be ready
     while (!(RCC->RCC_CR & (1<<25)));
+
+    // Enable Over-Drive mode (required for 180MHz operation on the F446) and wait for it to be ready
+    *PWR_CR |= (1 << 16); // ODEN
+    while (!(*PWR_CSR & (1 << 16))); // wait ODRDY
+
+    // Switch to Over-Drive and wait for the switch to complete
+    *PWR_CR |= (1 << 17); // ODSW
+    while (!(*PWR_CSR & (1 << 17))); // wait ODSWRDY
 
     //set the prescalers for the different buses (AHB, APB1, APB2)
     RCC->RCC_CFGR &= ~(0xF << 4);   // clear HPRE

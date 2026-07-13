@@ -28,6 +28,16 @@
         ldr r0, =_estack
         mov sp, r0
 
+        // Enable FPU (CP10/CP11 full access) before any code runs, since
+        // this is built with -mfloat-abi=hard and newlib's printf uses
+        // VFP instructions internally regardless of format specifiers used.
+        ldr r0, =0xE000ED88
+        ldr r1, [r0]
+        orr r1, r1, #(0xF << 20)
+        str r1, [r0]
+        dsb
+        isb
+
         ldr r0, =_sdata
         ldr r1, =_edata
         ldr r2, =_sidata

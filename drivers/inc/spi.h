@@ -23,7 +23,7 @@ typedef struct {
     uint32_t mosi_pin;
     uint32_t miso_pin;
     uint32_t nss_pin;
-    uint32_t af;
+    uint32_t alternate_function;
     uint32_t baudrate_prescaler;
     uint32_t cpol;
     uint32_t cpha;
@@ -39,7 +39,8 @@ typedef struct {
 
 void SPI_Init(SPI_TypeDef* SPIx, SPI_Config* config);
 void SPI_transmit(SPI_TypeDef* SPIx, uint8_t* data, uint16_t size);
-void SPI_receive(SPI_TypeDef* SPIx, uint8_t* data, uint16_t size);
+void SPI_receive(SPI_TypeDef* SPIx, uint8_t* data, uint8_t byte_out, uint16_t size);
+uint8_t SPI_TransferByte(SPI_TypeDef* SPIx, uint8_t byte_out);
 void CS_Select(GPIO_TypeDef* port, uint32_t pin);
 void CS_Deselect(GPIO_TypeDef* port, uint32_t pin);
 

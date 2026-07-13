@@ -7,6 +7,10 @@
 //RCC base Address
 #define RCC ((RCC_TypeDef*) 0x40023800)
 
+//Clock frequencies
+#define PCLK1_HZ  45000000UL  
+#define PCLK2_HZ  90000000UL 
+
 //Structure to make register access easier, give offsets are consistently 32 bits (4 bytes) apart.
 typedef struct {
     volatile uint32_t RCC_CR;

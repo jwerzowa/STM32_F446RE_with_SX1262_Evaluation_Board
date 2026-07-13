@@ -30,10 +30,10 @@ void GPIO_Init(GPIO_TypeDef* port, GPIO_PinConfig* config) {
     if (config->mode == GPIO_MODE_ALTERNATE) {
         if (config->pin < 8) {
             port->AFRL &= ~(0xF << (config->pin * 4));
-            port->AFRL |=  (config->af << (config->pin * 4));
+            port->AFRL |=  (config->alternate_function << (config->pin * 4));
         } else {
             port->AFRH &= ~(0xF << ((config->pin - 8) * 4));
-            port->AFRH |=  (config->af << ((config->pin - 8) * 4));
+            port->AFRH |=  (config->alternate_function << ((config->pin - 8) * 4));
         }
     }
 
