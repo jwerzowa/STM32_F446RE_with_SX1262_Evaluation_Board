@@ -2,16 +2,13 @@
 #define SX1262_H
 
 
+//in future, will use enums to define the different modes, frequencies, and other parameters for the SX1262, rahter than hardcoding them in the functions.
 
 
-uint8_t SX1262_status();
-void SetStandby();
-void SetPacketType();
-void SetRfFrequency
-void SetTxParams;
-void Buffer_Write();
-
-
+void SX126x_Reset(void);
+void SX126x_Init(void);                         
+void SX126x_Transmit(uint8_t* data, uint8_t len); 
+void SX126x_SendCommand(uint8_t opcode, uint8_t* params, uint8_t param_len);
 
 
 

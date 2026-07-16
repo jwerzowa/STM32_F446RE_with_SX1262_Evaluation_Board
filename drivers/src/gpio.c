@@ -41,6 +41,7 @@ void GPIO_Init(GPIO_TypeDef* port, GPIO_PinConfig* config) {
 
 void GPIO_Write(GPIO_TypeDef* port, uint32_t pin, uint8_t value) {
 
+    //check the value, if it's 1, set the pin high, if it's 0, set the pin low. Use the BSRR register to set or reset the pin atomically (avoiding potential interrupt issues).
     if(value){
         port->BSRR = (1 << pin); //Set the pin
     } else {
@@ -48,10 +49,13 @@ void GPIO_Write(GPIO_TypeDef* port, uint32_t pin, uint8_t value) {
     }
 }
 
+
 void GPIO_Toggle(GPIO_TypeDef* port, uint32_t pin) {
+    //Toggle function, less ideal than using BSRR since it reads the current state of the pin and writes the opposite value to it, which can get caught in an intterupt. 
     port->ODR ^= (1 << pin); //Toggle the pin
 }
 
 uint8_t GPIO_Read(GPIO_TypeDef* port, uint32_t pin) {
+    //Read the state of the specified pin from the input data register (IDR) and return it as a boolean value (0 or 1).
     return port->IDR & (1 << pin);
 }

@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "gpio.h"
 
-
+// SPI register structure, used to access the SPI peripheral registers directly
 typedef struct {
     volatile uint32_t CR1;
     volatile uint32_t CR2;
@@ -17,6 +17,7 @@ typedef struct {
     volatile uint32_t I2SPR;
 } SPI_TypeDef;
 
+// SPI configuration structure, used to more easily initialize the SPI peripheral with specific settings
 typedef struct {
     GPIO_TypeDef* port;
     uint32_t sck_pin;
@@ -31,7 +32,7 @@ typedef struct {
     uint32_t lsbfirst;
 } SPI_Config;
 
-
+//STM32 F446RE SPI base addresses
 #define SPI1 ((SPI_TypeDef*) 0x40013000)
 #define SPI2 ((SPI_TypeDef*) 0x40003800)
 #define SPI3 ((SPI_TypeDef*) 0x40003C00)
