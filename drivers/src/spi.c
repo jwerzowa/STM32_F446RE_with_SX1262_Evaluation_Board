@@ -3,8 +3,10 @@
 #include "../inc/gpio.h"
 
 void SPI_Init(SPI_TypeDef* SPIx, SPI_Config* config) {
+    
     RCC->RCC_APB2ENR |= (1 << 12); // Enable SPI1 clock
 
+    //Configure GPIO pins for SPI functionality using the provided configuration structure. Each pin (SCK, MOSI, MISO, NSS) is set up with the appropriate mode, output type, speed, pull-up/pull-down configuration, and alternate function given config struct
     GPIO_PinConfig sck = {
         .pin = config->sck_pin,
         .mode = GPIO_MODE_ALTERNATE,
@@ -43,7 +45,7 @@ void SPI_Init(SPI_TypeDef* SPIx, SPI_Config* config) {
     GPIO_Init(config->port, &miso);
     GPIO_Init(config->port, &nss);
 
-
+    //Configure the SPI peripheral. 
     SPIx->CR1 = (config->cpol << 1) |
              (config->cpha << 0) |
              (1 << 2) |                        // MSTR
@@ -53,14 +55,14 @@ void SPI_Init(SPI_TypeDef* SPIx, SPI_Config* config) {
              (1 << 8) |                         // SSI - force internal NSS high
              (1 << 9);                          // SSM - software slave management (NSS is a plain GPIO here)
 
-    SPIx->CR1 |= (1 << 6); // SPE - enable SPI last
+    SPIx->CR1 |= (1 << 6); // enable SPI last
 }
 
     
 
 
 
-void SPI_transmit(SPI_TypeDef* SPIx, uint8_t* data, uint16_t size) {              // read
+void SPI_transmit(SPI_TypeDef* SPIx, uint8_t* data, uint16_t size) {            
     for (uint16_t i = 0; i < size; i++) {
         SPI_TransferByte(SPIx, data[i]); // Send byte and receive dummy byte
     }
@@ -85,10 +87,8 @@ uint8_t SPI_TransferByte(SPI_TypeDef* SPIx, uint8_t byte_out){
 };
 
 
-
-
 void CS_Select(GPIO_TypeDef* port, uint32_t pin) {
-    GPIO_Write(port, pin, 0); // Pull low to select
+    GPIO_Write(port, pin, 0); // Pull low to select 
 }
 
 void CS_Deselect(GPIO_TypeDef* port, uint32_t pin) {

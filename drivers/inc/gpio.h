@@ -4,7 +4,7 @@
 
 #include <stdint.h>
 
-
+//base register addresses 
 #define GPIOA ((GPIO_TypeDef*) 0x40020000)
 #define GPIOB ((GPIO_TypeDef*) 0x40020400)
 #define GPIOC ((GPIO_TypeDef*) 0x40020800)
@@ -14,7 +14,7 @@
 #define GPIOG ((GPIO_TypeDef*) 0x40021800)
 #define GPIOH ((GPIO_TypeDef*) 0x40021C00)
 
-
+//leverage enums for better readability, making it easier to understand the purpose of each configuration option when initializing GPIO pins.
 typedef enum {
     GPIO_MODE_INPUT = 0x00,
     GPIO_MODE_OUTPUT = 0x01,
@@ -40,6 +40,8 @@ typedef enum {
     GPIO_PULL_DOWN = 0x02
 } GPIO_Pull;
 
+
+//configuration structure for GPIO pins, making initialization easier.
 typedef struct {
     uint32_t pin;
     GPIO_Mode mode;
@@ -49,6 +51,8 @@ typedef struct {
     uint32_t        alternate_function;
 } GPIO_PinConfig;
 
+
+// GPIO register structure, mapping the GPIO registers to a C struct, allowing for easy access to the registers using pointer dereferencing.
 typedef struct {
     volatile uint32_t MODER;
     volatile uint32_t OTYPER;
