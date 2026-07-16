@@ -96,7 +96,7 @@ int main(void) {
     USART_transmit(USART2, (uint8_t*)"Starting main loop...\r\n", 23);
 
     while(1) {
-        USART_transmit(USART2, (uint8_t*)"Waiting for BUSY low...\r\n", 25);
+        
         while(GPIO_Read(GPIOB, 3) == 1); // wait BUSY low
         GPIO_Write(GPIOA, 8, 0);          // NSS low
 
@@ -117,15 +117,18 @@ int main(void) {
 }
 
 
+void SX1262_status() {
+    while(GPIO_Read(GPIOB, 3) == 1); // wait BUSY low
+    GPIO_Write(GPIOA, 8, 0);          // NSS low
 
 
-/*
-SCK—D13 PA5 
-(SPI1_SCK)MISO— D12 - PA6(SPI1_MISO)
-MOSI— D11 - PA7(SPI1_MOSI)
-NSS(CS)—D7 - PA8
-BUSY— D3 - PB3 
-(DIO1)(IRQ)—D5 - PB4
-NRESET— A0 - PA0
-ANT_SW— D8 - PA9
-*/
+    uint8_t opcode = 0xC0;
+    uint8_t status;
+
+    SPI_transmit(SPI1, &opcode, 1);   // send opcode, discard the garbage byte back
+    SPI_receive(SPI1, &status, 0x00, 1); // send dummy 0x00, capture the real status
+    GPIO_Write(GPIOA, 8, 1);          // NSS high
+
+    USART_transmit(USART2, &status, 1);
+    USART_transmit(USART2, (uint8_t*)"\r\n", 2);
+}
